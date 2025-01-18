@@ -13,7 +13,29 @@ Express.js is a minimal and flexible Node.js web framework that simplifies build
 
 import express from "express";
 const app = express();
+
+/*
+🚀 What is middleware?
+Middlewares are functions that executes during request and response cycle.Every time a request is made, it goes through a middleware pipeline before reaching the response.
+express.json() → Parses incoming JSON data.
+express.urlencoded({ extended: true }) → Parses form data.
+express.static({ extended: true }) → Serves static files such as html, css, JS, photos, fonts, videos and other assets.
+
+Middleware can be applied:
+1️⃣ Globally → app.use(middleware) (Runs on all routes).
+2️⃣ Specific Routes → app.get("/route", middleware, handler).
+
+🚀 Custom Middleware
+1. It has three parameters (req, res, next)
+2. next() (Function) → Passes control to the next middleware or route.
+
+✔ Custom middleware is used for logging, authentication, request timing, etc.
+✔ Must call next() to continue execution.
+✔ Can be applied globally or to specific routes.
+*/
+
 app.use(express.json()); // Middleware to parse JSON for POST, PUT & PATCH requests
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.send("Hello world, This is home page");
