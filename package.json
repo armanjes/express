@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This roadmap is designed to help you master **Express.js** in just **7 days**, covering 90% of the most used topics. By the end, you'll have a strong foundation and a **mini-project** to showcase your skills.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
