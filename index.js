@@ -35,7 +35,7 @@ Middleware can be applied:
 */
 
 app.use(express.json()); // Middleware to parse JSON for POST, PUT & PATCH requests
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); // Middleware for form input
 
 app.get("/", (req, res) => {
   res.send("Hello world, This is home page");
@@ -71,5 +71,45 @@ app.get("/user/:id", (req, res) => {
   res.send(`Fetching data from ${id}`);
 });
 
-const PORT = process.env.PORT || 5000;
+// 🚀 joi data validation
+import Joi from "joi";
+
+const validateRegistration = (req, res, next) => {
+  const schema = Joi.object({
+    name: Joi.string().required().min(3).max(15),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).max(15).required(),
+  });
+  const { error } = schema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  next();
+};
+
+app.post("/api/register", validateRegistration, (req, res) => {
+  try {
+    return res.status(200).json({ message: "User was created!" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+const validateLogin = (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).max(15).required(),
+  });
+  const { error } = schema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  next();
+};
+
+app.post("/api/login", validateLogin, (req, res) => {
+  try {
+    return res.status(200).json({ message: "User Logged in" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("server running!"));
