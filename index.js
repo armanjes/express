@@ -1,115 +1,46 @@
 /*
-Express.js is a minimal and flexible Node.js web framework that simplifies building web applications and APIs.
-*/
+📌 Express.js is a minimal and flexible Node.js web application framework
+that simplifies web application and API development.
 
-/*
-🚀 HTTP Methods
-✔ GET → Fetch Data
-✔ POST → Create Data
-✔ PUT → Update Entire Data
-✔ PATCH → Update Partial Data
-✔ DELETE → Remove Data
+🔸 HTTP (HyperText Transfer Protocol) methods define the type of action performed on the server:
+
+  ✅ GET     → Retrieve data (Read)
+  ✅ POST    → Submit data (Create)
+  ✅ PUT     → Update data completely (Replace)
+  ✅ PATCH   → Update data partially (Modify)
+  ✅ DELETE  → Remove data (Delete)
+
+🔹 The `req` (request) object contains everything sent from the client (browser) to the server:
+
+  ⭐ req.body     → Contains data from POST or PUT requests (Requires middleware like express.json()).
+  ⭐ req.params   → Retrieves route parameters from dynamic URLs (e.g., /user/:id).
+  ⭐ req.query    → Retrieves query parameters from the URL (e.g., /search?q=keyword).
+  ⭐ req.headers  → Accesses request headers (e.g., Authorization, Content-Type).
+  ⭐ req.method   → Returns the HTTP method used (e.g., GET, POST).
+
+🔹 The `res` (response) object is used to send data from the server back to the client:
+
+  ⭐ res.send()       → Sends a plain text or HTML response.
+  ⭐ res.json()       → Sends a JSON response.
+  ⭐ res.status()     → Sets the HTTP status code.
+  ⭐ res.redirect()   → Redirects the client to a different URL.
+  ⭐ res.setHeader()  → Sets custom response headers.
 */
 
 import express from "express";
 const app = express();
-
-/*
-🚀 What is middleware?
-Middlewares are functions that executes during request and response cycle.Every time a request is made, it goes through a middleware pipeline before reaching the response.
-express.json() → Parses incoming JSON data.
-express.urlencoded({ extended: true }) → Parses form data.
-express.static({ extended: true }) → Serves static files such as html, css, JS, photos, fonts, videos and other assets.
-
-Middleware can be applied:
-1️⃣ Globally → app.use(middleware) (Runs on all routes).
-2️⃣ Specific Routes → app.get("/route", middleware, handler).
-
-🚀 Custom Middleware
-1. It has three parameters (req, res, next)
-2. next() (Function) → Passes control to the next middleware or route.
-
-✔ Custom middleware is used for logging, authentication, request timing, etc.
-✔ Must call next() to continue execution.
-✔ Can be applied globally or to specific routes.
-*/
-
-app.use(express.json()); // Middleware to parse JSON for POST, PUT & PATCH requests
-app.use(express.urlencoded({ extended: true })); // Middleware for form input
+const PORT = 3000;
 
 app.get("/", (req, res) => {
-  res.send("Hello world, This is home page");
+  res.send("this is get route");
 });
 
-/*
-🚀 req (Request) res (Response) are objects.
-1️⃣ The req object contains info about them http request sent by client.
-⭐ req.body 👉 Contains data form a POST or PUT request.
-⭐ req.params 👉 Gets route parameters used in dynamic routes.
-⭐ req.query 👉 Gets query parameters from the URL.
-⭐ req.headers 👉 Contains request headers (e.g., Authorization).
-⭐ req.method 👉 HTTP method used in the request.
-
-2️⃣ The res object used for sending response back to client.
-⭐ req.send() 👉 Sends a tex response
-⭐ req.json() 👉 Sends a json response
-⭐ req.status() 👉 Sets HTTP status code
-⭐ req.redirect() 👉 Redirects to another url
-⭐ req.setHeaders() 👉 Set custom headers
-
-req.body 	 Used to send data in POST, PUT, PATCH requests.
-req.params 	 Used to get dynamic values from the URL.
-*/
-
-app.post("/user", (req, res) => {
-  const { name, email } = req.body;
-  res.status(200).json({ name, email });
+app.get("/:name", (req, res) => {
+  res.send(`name is: ${req.params.name}`);
 });
 
-app.get("/user/:id", (req, res) => {
-  const { id } = req.params;
-  res.send(`Fetching data from ${id}`);
+app.post("/submit", (req, res) => {
+  res.send("this is post route");
 });
 
-// 🚀 joi data validation
-import Joi from "joi";
-
-const validateRegistration = (req, res, next) => {
-  const schema = Joi.object({
-    name: Joi.string().required().min(3).max(15),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(6).max(15).required(),
-  });
-  const { error } = schema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
-  next();
-};
-
-app.post("/api/register", validateRegistration, (req, res) => {
-  try {
-    return res.status(200).json({ message: "User was created!" });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-const validateLogin = (req, res, next) => {
-  const schema = Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().min(6).max(15).required(),
-  });
-  const { error } = schema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
-  next();
-};
-
-app.post("/api/login", validateLogin, (req, res) => {
-  try {
-    return res.status(200).json({ message: "User Logged in" });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("server running!"));
+app.listen(PORT, () => console.log("localhost:3000"));
