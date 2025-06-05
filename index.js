@@ -1,8 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import cors from 'cors'
-import cookieParser from "cookie-parser";
 import "express-async-errors";
 import authRoute from "./routes/authRoute.js";
 
@@ -12,13 +10,6 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser())
-app.use(
-  cors({
-    origin: "http://127.0.0.1:5500",
-    credentials: true,
-  })
-);
 
 
 app.use("/api/auth/", authRoute);
